@@ -6,6 +6,7 @@ import { Ticket } from "@shared/api";
 import { TicketCard } from "@/components/app/TicketCard";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
+import { cn } from "@/lib/utils";
 
 export default function Dashboard() {
   const { user } = useAuth();
@@ -36,12 +37,12 @@ export default function Dashboard() {
       </div>
       <Tabs defaultValue="Pending" className="w-full">
         <TabsList>
-          <TabsTrigger value="Pending">Pending ({grouped.Pending.length})</TabsTrigger>
-          <TabsTrigger value="Ongoing">Ongoing ({grouped.Ongoing.length})</TabsTrigger>
-          <TabsTrigger value="Resolved">Resolved ({grouped.Resolved.length})</TabsTrigger>
+          <TabsTrigger value="Pending" className="data-[state=active]:bg-pending/90 data-[state=active]:text-white">Pending ({grouped.Pending.length})</TabsTrigger>
+          <TabsTrigger value="Ongoing" className="data-[state=active]:bg-ongoing/90 data-[state=active]:text-white">Ongoing ({grouped.Ongoing.length})</TabsTrigger>
+          <TabsTrigger value="Resolved" className="data-[state=active]:bg-resolved/90 data-[state=active]:text-white">Resolved ({grouped.Resolved.length})</TabsTrigger>
         </TabsList>
         {(["Pending", "Ongoing", "Resolved"] as const).map((status) => (
-          <TabsContent key={status} value={status} className="grid md:grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
+          <TabsContent key={status} value={status} className={cn("grid md:grid-cols-2 lg:grid-cols-3 gap-4 mt-4")}>
             {grouped[status].length === 0 ? (
               <div className="text-muted-foreground">No {status.toLowerCase()} tickets.</div>
             ) : (

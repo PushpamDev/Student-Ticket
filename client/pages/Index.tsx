@@ -21,7 +21,7 @@ export default function Index() {
                 <Button asChild size="lg"><Link to="/register">Create your account</Link></Button>
                 <Button asChild variant="outline" size="lg"><Link to="/login">I already have an account</Link></Button>
               </div>
-              <div className="mt-6 text-sm text-muted-foreground">Admins: use admin@admin.edu · Placement: placement@placement.edu</div>
+              <div className="mt-6 text-sm text-muted-foreground"></div>
             </div>
             <div className="grid gap-4">
               <Card className="border-primary/20">

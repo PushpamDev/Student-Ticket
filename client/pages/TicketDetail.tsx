@@ -9,6 +9,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { StatusBadge } from "@/components/app/StatusBadge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ChatBubble } from "@/components/app/ChatBubble";
+import { Star } from "lucide-react";
 
 export default function TicketDetail() {
   const { id } = useParams();
@@ -16,14 +17,17 @@ export default function TicketDetail() {
   const [ticket, setTicket] = useState<Ticket | null>(null);
   const [messages, setMessages] = useState<TicketMessage[]>([]);
   const [body, setBody] = useState("");
+  const [feedbackText, setFeedbackText] = useState("");
+  const [feedbackRating, setFeedbackRating] = useState(0);
   const endRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    if (!id) return;
     (async () => {
       try {
-        const t = await api.getTicket(id as string);
+        const t = await api.getTicket(id);
         setTicket(t);
-        const msgs = await api.fetchMessages(id as string);
+        const msgs = await api.fetchMessages(id);
         setMessages(msgs);
       } catch (err) {
         setTicket(null);
@@ -54,6 +58,26 @@ export default function TicketDetail() {
     if (!ticket) return;
     try {
       const updated = await api.updateTicketApi(ticket._id || (ticket as any).id, { status: next });
+      setTicket(updated);
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+  async function submitFeedback() {
+    if (!ticket || !user || feedbackRating === 0 || !feedbackText.trim()) return;
+    try {
+      const updated = await api.updateTicketApi(ticket._id || (ticket as any).id, {
+        feedback: {
+          rating: feedbackRating,
+          text: feedbackText,
+        },
+        closedBy: {
+          id: user.id,
+          name: user.name,
+          email: user.email,
+        },
+      });
       setTicket(updated);
     } catch (err) {
       console.error(err);
@@ -100,14 +124,54 @@ export default function TicketDetail() {
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="text-sm">Status</div>
-          <Select value={ticket.status} onValueChange={(v) => canUpdateStatus && onStatusChange(v as Ticket["status"]) }>
-            <SelectTrigger><SelectValue /></SelectTrigger>
+          <Select value={ticket.status} onValueChange={(v) => canUpdateStatus && onStatusChange(v as Ticket["status"])}>
+            <SelectTrigger>
+              <SelectValue />
+            </SelectTrigger>
             <SelectContent>
               <SelectItem value="Pending">Pending</SelectItem>
               <SelectItem value="Ongoing">Ongoing</SelectItem>
               <SelectItem value="Resolved">Resolved</SelectItem>
             </SelectContent>
           </Select>
+          {ticket.status === "Resolved" && user.role === "student" && !ticket.feedback && (
+            <div className="space-y-4 pt-4">
+              <h3 className="text-lg font-semibold">Provide Feedback</h3>
+              <div className="flex items-center gap-2">
+                {[1, 2, 3, 4, 5].map((star) => (
+                  <Star
+                    key={star}
+                    className={`h-6 w-6 cursor-pointer ${feedbackRating >= star ? "text-yellow-400 fill-yellow-400" : "text-gray-400"}`}
+                    onClick={() => setFeedbackRating(star)}
+                  />
+                ))}
+              </div>
+              <Textarea
+                value={feedbackText}
+                onChange={(e) => setFeedbackText(e.target.value)}
+                placeholder="Tell us about your experience..."
+                rows={3}
+              />
+              <Button onClick={submitFeedback}>Submit Feedback</Button>
+            </div>
+          )}
+          {ticket.feedback && (
+            <div className="space-y-2 pt-4">
+              <h3 className="text-lg font-semibold">Feedback</h3>
+              <div className="flex items-center gap-2">
+                {[1, 2, 3, 4, 5].map((star) => (
+                  <Star
+                    key={star}
+                    className={`h-5 w-5 ${ticket.feedback.rating >= star ? "text-yellow-400 fill-yellow-400" : "text-gray-400"}`}
+                  />
+                ))}
+              </div>
+              <p className="text-sm text-muted-foreground">{ticket.feedback.text}</p>
+              {ticket.closedBy && (
+                <p className="text-xs text-muted-foreground">by {ticket.closedBy.name} ({ticket.closedBy.email})</p>
+              )}
+            </div>
+          )}
         </CardContent>
       </Card>
     </div>

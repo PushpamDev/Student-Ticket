@@ -16,6 +16,15 @@ export interface ITicket extends mongoose.Document {
   status: TicketStatus;
   createdAt: Date;
   updatedAt: Date;
+  feedback?: {
+    rating: number;
+    text: string;
+  };
+  closedBy?: {
+    id: string;
+    name: string;
+    email: string;
+  };
 }
 
 const TicketSchema = new mongoose.Schema<ITicket>({
@@ -31,6 +40,21 @@ const TicketSchema = new mongoose.Schema<ITicket>({
   status: { type: String, enum: ["Pending", "Ongoing", "Resolved"], default: "Pending" },
   createdAt: { type: Date, default: () => new Date() },
   updatedAt: { type: Date, default: () => new Date() },
+  feedback: {
+    type: {
+      rating: { type: Number, required: true },
+      text: { type: String, required: true },
+    },
+    required: false,
+  },
+  closedBy: {
+    type: {
+      id: { type: String, required: true },
+      name: { type: String, required: true },
+      email: { type: String, required: true },
+    },
+    required: false,
+  },
 });
 
 TicketSchema.pre("save", function (next) {

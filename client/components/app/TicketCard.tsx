@@ -3,12 +3,18 @@ import { Button } from "@/components/ui/button";
 import { StatusBadge } from "./StatusBadge";
 import { ArrowRight, Calendar, Tags } from "lucide-react";
 import { Link } from "react-router-dom";
+import { cn } from "@/lib/utils";
 
 export function TicketCard({ ticket }: { ticket: any }) {
   const id = ticket._id || ticket.id;
   const created = ticket.createdAt ? new Date(ticket.createdAt) : undefined;
   return (
-    <Card className="hover:shadow-lg transition-shadow">
+    <Card className={cn(
+      "hover:shadow-lg transition-shadow",
+      ticket.status === "Pending" && "border-pending",
+      ticket.status === "Ongoing" && "border-ongoing",
+      ticket.status === "Resolved" && "border-resolved",
+    )}>
       <CardHeader>
         <CardTitle className="flex items-center justify-between">
           <span className="truncate">{(ticket.description || "").slice(0, 60)}</span>

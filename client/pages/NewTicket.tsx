@@ -65,15 +65,23 @@ export default function NewTicket() {
               <FormField control={form.control} name="branch" render={({ field }) => (
                 <FormItem>
                   <FormLabel>Branch of the institute</FormLabel>
-                  <FormControl>
-                    <Input placeholder="e.g., Faridabad,Pune" {...field} />
-                  </FormControl>
+                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select a branch" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value="Pune">Pune</SelectItem>
+                      <SelectItem value="Faridabad">Faridabad</SelectItem>
+                    </SelectContent>
+                  </Select>
                   <FormMessage />
                 </FormItem>
               )} />
               <FormField control={form.control} name="name" render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Name</FormLabel>z``
+                  <FormLabel>Name</FormLabel>
                   <FormControl>
                     <Input {...field} />
                   </FormControl>
@@ -84,7 +92,7 @@ export default function NewTicket() {
                 <FormItem>
                   <FormLabel>Faculty Name</FormLabel>
                   <FormControl>
-                    <Input placeholder="e.g., Karan" {...field} />
+                    <Input placeholder="e.g., Karan Khatri" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

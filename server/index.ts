@@ -15,6 +15,11 @@ connectDB().catch((err) => {
 export function createServer() {
   const app = express();
 
+  app.use((req, res, next) => {
+    console.log(`${req.method} ${req.url}`);
+    next();
+  });
+
   // Middleware
   app.use(cors());
   app.use(express.json());
@@ -26,12 +31,26 @@ export function createServer() {
     res.json({ message: ping });
   });
 
-  app.get("/api/demo", handleDemo);
+    app.get("/api/demo", handleDemo);
 
   // Auth and app routes
-  app.use("/api/auth", authRouter);
-  app.use("/api/tickets", ticketsRouter);
-  app.use("/api/messages", messagesRouter);
+  try {
+    app.use("/api/auth", authRouter);
+  } catch (e) {
+    console.error("Error mounting auth router:", e);
+  }
+
+  try {
+    app.use("/api/tickets", ticketsRouter);
+  } catch (e) {
+    console.error("Error mounting tickets router:", e);
+  }
+
+  try {
+    app.use("/api/messages", messagesRouter);
+  } catch (e) {
+    console.error("Error mounting messages router:", e);
+  }
 
   return app;
 }

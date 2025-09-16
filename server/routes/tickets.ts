@@ -50,16 +50,47 @@ router.get("/:id", authRequired, async (req, res) => {
   res.json({ ticket: t });
 });
 
-// Update ticket (status) - only admin or placement can change status
+// Update ticket (status or feedback)
 router.put("/:id", authRequired, async (req, res) => {
   const role = req.user.role as string;
-  const allowed = ["admin","placement"];
-  if (!allowed.includes(role)) return res.status(403).json({ message: "Forbidden" });
+  const userId = req.user.id as string;
   const t = await Ticket.findById(req.params.id);
   if (!t) return res.status(404).json({ message: "Not found" });
-  if (req.body.status) t.status = req.body.status;
-  await t.save();
-  res.json({ ticket: t });
+
+  let updated = false;
+
+  // Case 1: Admin/Placement updates status
+  if (req.body.status) {
+    const allowed = ["admin", "placement"];
+    if (!allowed.includes(role)) {
+      return res.status(403).json({ message: "Forbidden to update status" });
+    }
+    t.status = req.body.status;
+    if (t.status === "Resolved") {
+      t.closedBy = {
+        id: req.user.id,
+        name: req.user.name,
+        email: req.user.email,
+      };
+    }
+    updated = true;
+  }
+
+  // Case 2: Student submits feedback
+  if (req.body.feedback) {
+    if (role !== 'student' || t.studentId.toString() !== userId) {
+        return res.status(403).json({ message: "Forbidden to submit feedback" });
+    }
+    t.feedback = req.body.feedback;
+    updated = true;
+  }
+
+  if (updated) {
+    await t.save();
+    return res.json({ ticket: t });
+  }
+
+  res.status(400).json({ message: "No valid fields to update" });
 });
 
 // Migration endpoint to bulk import client data (protected)

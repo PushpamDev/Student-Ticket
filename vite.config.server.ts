@@ -7,7 +7,6 @@ export default defineConfig({
     lib: {
       entry: path.resolve(__dirname, "server/node-build.ts"),
       name: "server",
-      fileName: "production",
       formats: ["es"],
     },
     outDir: "dist/server",
@@ -35,7 +34,7 @@ export default defineConfig({
       ],
       output: {
         format: "es",
-        entryFileNames: "[name].mjs",
+        entryFileNames: "node-build.mjs",
       },
     },
     minify: false, // Keep readable for debugging
