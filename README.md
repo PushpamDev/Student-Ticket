@@ -29,9 +29,6 @@ A full-stack application for managing student tickets, built with a modern tech 
 ## 📂 Project Structure
 
 ```
-Of course. Here is the project structure formatted correctly for you to copy and paste.
-
-```
 /
 ├── client/                 # Frontend React application
 │   ├── src/                # Main source code
