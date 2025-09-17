@@ -1,7 +1,7 @@
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { StatusBadge } from "./StatusBadge";
-import { ArrowRight, Calendar, Tags } from "lucide-react";
+import { ArrowRight, Calendar, Star, Tags } from "lucide-react";
 import { Link } from "react-router-dom";
 import { cn } from "@/lib/utils";
 
@@ -23,7 +23,7 @@ export function TicketCard({ ticket }: { ticket: any }) {
       </CardHeader>
       <CardContent className="text-sm space-y-2">
         <div className="flex items-center gap-2 text-muted-foreground">
-          <Tags className="h-4 w-4" />
+          <Tags className="h-4 w-4" />  
           <span>{ticket.category}</span>
         </div>
         <div className="flex items-center gap-2 text-muted-foreground">
@@ -31,6 +31,19 @@ export function TicketCard({ ticket }: { ticket: any }) {
           <span>{created ? created.toLocaleString() : ""}</span>
         </div>
         <div className="text-muted-foreground truncate">Branch: {ticket.branch}</div>
+        {ticket.rating && (
+          <div className="flex items-center gap-1">
+            {[...Array(5)].map((_, i) => (
+              <Star
+                key={i}
+                className={cn(
+                  "h-4 w-4",
+                  i < ticket.rating ? "text-yellow-400 fill-yellow-400" : "text-gray-300"
+                )}
+              />
+            ))}
+          </div>
+        )}
       </CardContent>
       <CardFooter className="justify-between">
         <div className="text-xs text-muted-foreground">By {ticket.studentName}</div>

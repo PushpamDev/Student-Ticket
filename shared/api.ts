@@ -6,7 +6,7 @@ export interface DemoResponse {
   message: string;
 }
 
-export type Role = "student" | "admin" | "placement";
+export type Role = "student" | "admin" | "placement" | "superadmin";
 
 export type TicketCategory =
   | "Infrastructure"

@@ -5,7 +5,7 @@ import { Navigate, useLocation } from "react-router-dom";
 
 interface AuthContextValue {
   user: User | null;
-  register: (name: string, email: string, password: string) => Promise<any>;
+  register: (name: string, email: string, password: string, branch?: "Faridabad" | "Pune") => Promise<any>;
   login: (email: string, password: string) => Promise<any>;
   logout: () => void;
 }
@@ -25,8 +25,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const value = useMemo<AuthContextValue>(
     () => ({
       user,
-      register: async (name: string, email: string, password: string) => {
-        const res = await api.register(name, email, password);
+      register: async (name: string, email: string, password: string, branch?: "Faridabad" | "Pune") => {
+        const res = await api.register(name, email, password, branch);
         setUser(res.user || null);
         return res;
       },

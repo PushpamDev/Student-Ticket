@@ -28,14 +28,15 @@ router.post("/", authRequired, async (req, res) => {
 router.get("/", authRequired, async (req, res) => {
   const role = req.user.role as string;
   const userId = req.user.id as string;
+  const branch = req.user.branch;
 
   if (role === "admin") {
     // admin sees all except placement
-    const tickets = await Ticket.find({ category: { $in: ["Infrastructure","Faculty","Certificate","Fee"] } }).sort({ createdAt: -1 });
+    const tickets = await Ticket.find({ category: { $in: ["Infrastructure", "Faculty", "Certificate", "Fee"] }, branch }).sort({ createdAt: -1 });
     return res.json({ tickets });
   }
   if (role === "placement") {
-    const tickets = await Ticket.find({ category: "Placement" }).sort({ createdAt: -1 });
+    const tickets = await Ticket.find({ category: "Placement", branch }).sort({ createdAt: -1 });
     return res.json({ tickets });
   }
   // student: see own tickets

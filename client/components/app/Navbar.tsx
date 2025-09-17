@@ -21,15 +21,26 @@ export function Navbar() {
           )}
           {user && (
             <>
-              <NavLink to="/dashboard" className={({ isActive }) => (isActive ? "text-foreground" : "text-muted-foreground hover:text-foreground")}>
-                Dashboard
-              </NavLink>
-              <NavLink to="/tickets/new" className={({ isActive }) => (isActive ? "text-foreground" : "text-muted-foreground hover:text-foreground")}>Raise Ticket</NavLink>
+              {user.role === "student" && (
+                <>
+                  <NavLink to="/dashboard" className={({ isActive }) => (isActive ? "text-foreground" : "text-muted-foreground hover:text-foreground")}>
+                    Dashboard
+                  </NavLink>
+                  <NavLink to="/tickets/new" className={({ isActive }) => (isActive ? "text-foreground" : "text-muted-foreground hover:text-foreground")}>
+                    Raise Ticket
+                  </NavLink>
+                </>
+              )}
               {user.role === "admin" && (
-                <NavLink to="/admin" className={({ isActive }) => (isActive ? "text-foreground" : "text-muted-foreground hover:text-foreground")}>Admin</NavLink>
+                <NavLink to="/admin" className={({ isActive }) => (isActive ? "text-foreground" : "text-muted-foreground hover:text-foreground")}>
+                  Admin
+                </NavLink>
               )}
               {user.role === "placement" && (
                 <NavLink to="/placement" className={({ isActive }) => (isActive ? "text-foreground" : "text-muted-foreground hover:text-foreground")}>Placement</NavLink>
+              )}
+              {user.role === "superadmin" && (
+                <NavLink to="/super-admin" className={({ isActive }) => (isActive ? "text-foreground" : "text-muted-foreground hover:text-foreground")}>Super Admin</NavLink>
               )}
             </>
           )}

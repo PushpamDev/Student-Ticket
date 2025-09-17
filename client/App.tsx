@@ -15,6 +15,7 @@ import NewTicket from "./pages/NewTicket";
 import TicketDetail from "./pages/TicketDetail";
 import AdminDashboard from "./pages/AdminDashboard";
 import PlacementDashboard from "./pages/PlacementDashboard";
+import SuperAdminDashboard from "./pages/SuperAdminDashboard";
 import { AuthProvider, ProtectedRoute } from "@/state/auth";
 import { Navbar } from "@/components/app/Navbar";
 
@@ -69,6 +70,14 @@ const App = () => (
               element={
                 <ProtectedRoute roles={["placement"]}>
                   <PlacementDashboard />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/super-admin"
+              element={
+                <ProtectedRoute roles={["superadmin"]}>
+                  <SuperAdminDashboard />
                 </ProtectedRoute>
               }
             />

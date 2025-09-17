@@ -30,8 +30,8 @@ async function request(path: string, options: RequestInit = {}) {
   return body;
 }
 
-export async function register(name: string, email: string, password: string) {
-  const body = await request(`/auth/register`, { method: "POST", body: JSON.stringify({ name, email, password }) });
+export async function register(name: string, email: string, password: string, branch?: "Faridabad" | "Pune") {
+  const body = await request(`/auth/register`, { method: "POST", body: JSON.stringify({ name, email, password, branch }) });
   if (body.token) setToken(body.token);
   return body;
 }
@@ -85,7 +85,22 @@ export async function postMessage(ticketId: string, message: string) {
   return body.message;
 }
 
+export async function getSuperAdminTickets() {
+  const body = await request(`/superadmin/tickets`);
+  return body.tickets || [];
+}
+
+export async function getSuperAdminRatings() {
+  const body = await request(`/superadmin/ratings`);
+  return body.ratings || [];
+}
+
+export async function getTicketsForAdmin(adminId: string) {
+  const body = await request(`/superadmin/ratings/${adminId}/tickets`);
+  return body.tickets || [];
+}
+
 export function getStoredToken() { return getToken(); }
 export function setStoredToken(t: string | null) { setToken(t); }
 
-export default { register, login, me, logout, fetchTickets, createTicket, getTicket, updateTicketApi, fetchMessages, postMessage, getStoredToken, setStoredToken };
+export default { register, login, me, logout, fetchTickets, createTicket, getTicket, updateTicketApi, fetchMessages, postMessage, getSuperAdminTickets, getSuperAdminRatings, getTicketsForAdmin, getStoredToken, setStoredToken };

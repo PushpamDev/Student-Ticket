@@ -6,6 +6,7 @@ import { connectDB } from "./db";
 import authRouter from "./routes/auth";
 import ticketsRouter from "./routes/tickets";
 import messagesRouter from "./routes/messages";
+import superadminRouter from "./routes/superadmin";
 
 // Attempt to connect to DB on startup (non-blocking here)
 connectDB().catch((err) => {
@@ -50,6 +51,12 @@ export function createServer() {
     app.use("/api/messages", messagesRouter);
   } catch (e) {
     console.error("Error mounting messages router:", e);
+  }
+
+  try {
+    app.use("/api/superadmin", superadminRouter);
+  } catch (e) {
+    console.error("Error mounting superadmin router:", e);
   }
 
   return app;

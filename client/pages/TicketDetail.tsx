@@ -113,67 +113,82 @@ export default function TicketDetail() {
             <div ref={endRef} />
           </div>
         </CardContent>
-        <CardFooter className="flex items-end gap-2">
-          <Textarea value={body} onChange={(e) => setBody(e.target.value)} placeholder="Type your message..." rows={2} />
-          <Button onClick={send}>Send</Button>
-        </CardFooter>
+        {user.role !== "superadmin" && (
+          <CardFooter className="flex items-end gap-2">
+            <Textarea
+              value={body}
+              onChange={(e) => setBody(e.target.value)}
+              placeholder={ticket.status === "Resolved" ? "This ticket is resolved." : "Type your message..."}
+              rows={2}
+              disabled={ticket.status === "Resolved"}
+            />
+            <Button onClick={send} disabled={ticket.status === "Resolved"}>
+              Send
+            </Button>
+          </CardFooter>
+        )}
       </Card>
-      <Card>
-        <CardHeader>
-          <CardTitle>Actions</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="text-sm">Status</div>
-          <Select value={ticket.status} onValueChange={(v) => canUpdateStatus && onStatusChange(v as Ticket["status"])}>
-            <SelectTrigger>
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="Pending">Pending</SelectItem>
-              <SelectItem value="Ongoing">Ongoing</SelectItem>
-              <SelectItem value="Resolved">Resolved</SelectItem>
-            </SelectContent>
-          </Select>
-          {ticket.status === "Resolved" && user.role === "student" && !ticket.feedback && (
-            <div className="space-y-4 pt-4">
-              <h3 className="text-lg font-semibold">Provide Feedback</h3>
-              <div className="flex items-center gap-2">
-                {[1, 2, 3, 4, 5].map((star) => (
-                  <Star
-                    key={star}
-                    className={`h-6 w-6 cursor-pointer ${feedbackRating >= star ? "text-yellow-400 fill-yellow-400" : "text-gray-400"}`}
-                    onClick={() => setFeedbackRating(star)}
-                  />
-                ))}
+      {user.role !== "student" ? (
+        <Card>
+          <CardHeader>
+            <CardTitle>Actions</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="text-sm">Status</div>
+            <Select value={ticket.status} onValueChange={(v) => canUpdateStatus && onStatusChange(v as Ticket["status"])}>
+              <SelectTrigger>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="Pending">Pending</SelectItem>
+                <SelectItem value="Ongoing">Ongoing</SelectItem>
+                <SelectItem value="Resolved">Resolved</SelectItem>
+              </SelectContent>
+            </Select>
+            {ticket.feedback && (
+              <div className="space-y-2 pt-4">
+                <h3 className="text-lg font-semibold">Feedback</h3>
+                <div className="flex items-center gap-2">
+                  {[1, 2, 3, 4, 5].map((star) => (
+                    <Star
+                      key={star}
+                      className={`h-5 w-5 ${ticket.feedback.rating >= star ? "text-yellow-400 fill-yellow-400" : "text-gray-400"}`}
+                    />
+                  ))}
+                </div>
+                <p className="text-sm text-muted-foreground">{ticket.feedback.text}</p>
+                {ticket.closedBy && (
+                  <p className="text-xs text-muted-foreground">by {ticket.closedBy.name} ({ticket.closedBy.email})</p>
+                )}
               </div>
-              <Textarea
-                value={feedbackText}
-                onChange={(e) => setFeedbackText(e.target.value)}
-                placeholder="Tell us about your experience..."
-                rows={3}
-              />
-              <Button onClick={submitFeedback}>Submit Feedback</Button>
+            )}
+          </CardContent>
+        </Card>
+      ) : ticket.status === "Resolved" && !ticket.feedback ? (
+        <Card>
+          <CardHeader>
+            <CardTitle>Provide Feedback</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="flex items-center gap-2">
+              {[1, 2, 3, 4, 5].map((star) => (
+                <Star
+                  key={star}
+                  className={`h-6 w-6 cursor-pointer ${feedbackRating >= star ? "text-yellow-400 fill-yellow-400" : "text-gray-400"}`}
+                  onClick={() => setFeedbackRating(star)}
+                />
+              ))}
             </div>
-          )}
-          {ticket.feedback && (
-            <div className="space-y-2 pt-4">
-              <h3 className="text-lg font-semibold">Feedback</h3>
-              <div className="flex items-center gap-2">
-                {[1, 2, 3, 4, 5].map((star) => (
-                  <Star
-                    key={star}
-                    className={`h-5 w-5 ${ticket.feedback.rating >= star ? "text-yellow-400 fill-yellow-400" : "text-gray-400"}`}
-                  />
-                ))}
-              </div>
-              <p className="text-sm text-muted-foreground">{ticket.feedback.text}</p>
-              {ticket.closedBy && (
-                <p className="text-xs text-muted-foreground">by {ticket.closedBy.name} ({ticket.closedBy.email})</p>
-              )}
-            </div>
-          )}
-        </CardContent>
-      </Card>
+            <Textarea
+              value={feedbackText}
+              onChange={(e) => setFeedbackText(e.target.value)}
+              placeholder="Tell us about your experience..."
+              rows={3}
+            />
+            <Button onClick={submitFeedback}>Submit Feedback</Button>
+          </CardContent>
+        </Card>
+      ) : null}
     </div>
   );
 }
